@@ -1,9 +1,14 @@
-import Head from "next/head";
+import Head from "next/head"
+import { currency } from "./utils/currency"
 
-export default function Home() {
-  const date = new Date()
-  return (
-    <div className='p-4' style={{ width:'210mm', height: '297mm' }}>
+const Invoice = ({CompanyName, AddressLine1, AddressLine2, VatNo, InvoiceNumber, Items, CurrencyCode, TimeOfIssue, InvoiceDate, DueDate, ExchangeRate}) => {
+  console.log(Items)
+  const format = (val) => {
+    return currency(CurrencyCode).format(val)
+  }
+  const total = Items.reduce((acc, item) => acc + item.Price*item.Quantity, 0)
+    return (
+        <div className='p-4' style={{ width:'210mm', height: '297mm' }}>
       <Head>
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,300' rel='stylesheet' type='text/css'/>
       </Head>
@@ -24,17 +29,18 @@ export default function Home() {
         </div>
         <div className="justify-end w-full flex pt-4">
           <div>
-            <p>VONT Limited</p>
-            <p>19 Seymour Place, London W1H 5BG</p>
-            <p>VAT NO. GB411315550</p>
+            <p>{CompanyName}</p>
+            <p>{AddressLine1}</p>
+            <p>{AddressLine2}</p>
+            <p>VAT NO. {VatNo}</p>
           </div>
         </div>
         <div className="text-center font-bold">
-          <p className="text-3xl py-4">05/01/1</p>
+          <p className="text-3xl py-4">{InvoiceNumber}</p>
         </div>
         <div>
-          <p>Invoice date: {date.toISOString().split('T')[0]}</p>
-          <p>Payment due: {new Date(date.setDate(date.getDate()+10)).toISOString().split('T')[0]}</p>
+          <p>Invoice date: {InvoiceDate}</p>
+          <p>Payment due: {DueDate}</p>
         </div>
         <table className="rounded-lg my-16">
           <tr className="border-b h-12">
@@ -47,49 +53,49 @@ export default function Home() {
             <th className="px-4 whitespace-nowrap">Vat (%)</th>
             <th className="px-4">Amount</th>
           </tr>
-          <tr className="py-2 border-b h-12">
-            <td className="px-4">1</td>
-            <td className="px-4">Development of Vont{"'"}s new web shop</td>
-            <td className="px-4">80.5</td>
-            <td className="px-4">hour</td>
-            <td className="px-4">$35</td>
+          {Items?.map((item, i) => <tr key={i} className="py-2 border-b h-12">
+            <td className="px-4">{i+1}</td>
+            <td className="px-4">{item.Desription}</td>
+            <td className="px-4">{item.Quantity}</td>
+            <td className="px-4">{item.Unit}</td>
+            <td className="px-4">{format(item.Price)}</td>
             <td className="px-4 whitespace-nowrap">0.00</td>
             <td className="px-4 whitespace-nowrap">0.00</td>
-            <td className="px-4">$2,817.50</td>
-          </tr>
+            <td className="px-4">{format(item.Quantity*item.Price)}</td>
+          </tr>)}
         </table>
         <div className="grid grid-cols-2">
-          <p>Time of issue: {new Date().toISOString()}</p>
+          <p>Time of issue: {TimeOfIssue}</p>
           <table>
             <tr>
               <td>SUBTOTAL VALUE:</td>
               <td></td>
-              <td>21,158.29 Kn</td>
+              <td>{currency("hrk").format(total*ExchangeRate)}</td>
             </tr>
             <tr>
               <td>SUBTOTAL VALUE:</td>
               <td></td>
-              <td>2,817.50 USD</td>
+              <td>{format(total)}</td>
             </tr>
             <tr>
               <td>VAT BASIS 0,00% :</td>
-              <td>21,158.29 VAT</td>
+              <td>{currency('HRK').format(total*ExchangeRate)} VAT</td>
               <td>0.00 Kn</td>
             </tr>
             <tr>
               <td>VAT BASIS 0,00% :</td>
-              <td>2,817.50 VAT</td>
+              <td>{format(total)} VAT</td>
               <td>0.00 USD</td>
             </tr>
             <tr>
               <td>TOTAL:</td>
               <td></td>
-              <td>21,158.29 Kn</td>
+              <td>{currency('HRK').format(total*ExchangeRate)}</td>
             </tr>
             <tr className="font-semibold">
               <td>TOTAL:</td>
               <td></td>
-              <td>2,817.50 USD</td>
+              <td>{format(total)}</td>
             </tr>
           </table>
         </div>
@@ -113,5 +119,7 @@ export default function Home() {
         </div>
       </div>
     </div>
-  )
+    )
 }
+
+export default Invoice
