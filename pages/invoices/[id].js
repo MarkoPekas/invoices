@@ -47,7 +47,6 @@ export const getServerSideProps = async (context) => {
 }
 
 const InvoicePage = ({invoice}) => {
-    console.log(invoice)
 
     return (
         <div>
