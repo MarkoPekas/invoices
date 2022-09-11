@@ -59,7 +59,7 @@ const InvoicePage = ({invoice}) => {
             InvoiceNumber={invoice.InvoiceNumber}
             Items={invoice.Items}
             TimeOfIssue={invoice.TimeOfIssue}
-            VatNo={invoice.VatNo}
+            VatNo={invoice.Address.VatNo}
             CurrencyCode={invoice.CurrencyCode}
             ExchangeRate={invoice.ExchangeRate}
             />
